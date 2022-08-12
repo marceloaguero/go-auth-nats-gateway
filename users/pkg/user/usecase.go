@@ -12,6 +12,10 @@ const (
 	minPasswordLength int = 6
 )
 
+var (
+	validate *validator.Validate
+)
+
 // Usecase represents users usecases
 // Extends User entity interface
 type Usecase interface {
@@ -28,8 +32,8 @@ type usecase struct {
 // NewUsecase creates a new usecase. Implements the Usecase interface
 func NewUsecase(repo Repository, passSvc pass.Service) Usecase {
 	return &usecase{
-		repository: repo,
-		passSvc:    passSvc,
+		repository:  repo,
+		passwordSvc: passSvc,
 	}
 }
 
@@ -37,7 +41,7 @@ func NewUsecase(repo Repository, passSvc pass.Service) Usecase {
 func (u *usecase) Create(user *User) (*User, error) {
 	// Verify email uniqueness
 	user.Email = strings.TrimSpace(user.Email)
-	_, err = u.GetByEmail(user.Email)
+	_, err := u.GetByEmail(user.Email)
 	if err != nil {
 		return nil, errors.BadRequest.Newf("user with email %s already exists", user.Email)
 	}
@@ -55,10 +59,10 @@ func (u *usecase) Create(user *User) (*User, error) {
 	user.Surname = strings.TrimSpace(user.Surname)
 	user.Name = strings.TrimSpace(user.Name)
 
-	validate = validator.New()
+	validate := validator.New()
 	err = validate.Struct(user)
 	if err != nil {
-		validationErrors := err.(validator.ValidateErrors)
+		validationErrors := err.(validator.ValidationErrors)
 		return nil, errors.BadRequest.Wrap(validationErrors, "error during user data validation")
 	}
 
@@ -110,7 +114,7 @@ func (u *usecase) Update(user *User) (*User, error) {
 	formerUser := &User{}
 
 	// Verify email uniqueness
-	formerUser, err = u.GetByEmail(user.Email)
+	formerUser, err := u.GetByEmail(user.Email)
 	if (err == nil) && (formerUser.ID != user.ID) {
 		return nil, errors.BadRequest.Newf("user with email %s already exists", user.Email)
 	}
@@ -136,7 +140,7 @@ func (u *usecase) Update(user *User) (*User, error) {
 
 	formerUser, err = u.GetByID(user.ID)
 	if err != nil {
-		return nil, errors.Wrap(err, "user with id %d does not exist", user.ID)
+		return nil, errors.Wrapf(err, "user with id %d does not exist", user.ID)
 	}
 
 	user, err = u.repository.Update(user)
@@ -149,8 +153,7 @@ func (u *usecase) Update(user *User) (*User, error) {
 
 // Delete a user
 func (u *usecase) Delete(user *User) error {
-	formerUser := &User{}
-	formerUser, err := u.GetByID(user.ID)
+	_, err := u.GetByID(user.ID)
 	if err != nil {
 		return errors.BadRequest.Wrapf(err, "user with id %d does not exist", user.ID)
 	}
