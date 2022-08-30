@@ -18,18 +18,18 @@ services:
         - "4222:4222"
         - "8222:8222"
       command: ["-js"]
-    users:
-        build:
-            context: ./users
-        image: marceloaguero/go-auth-grpc-gateway-users:local
-        environment:
-            - PORT=8080
-            - DB_DSN=:supersecret@tcp(db:3306)
-            - DB_NAME=go-auth-grpc-gateway
-        ports:
-            - "8080:8080"
-        depends_on:
-            - db
+#    users:
+#        build:
+#           context: ./users
+#       image: marceloaguero/go-auth-grpc-gateway-users:local
+#       environment:
+#           - PORT=8080
+#           - DB_DSN=:supersecret@tcp(db:3306)
+#           - DB_NAME=go-auth-grpc-gateway
+#       ports:
+#           - "8080:8080"
+#       depends_on:
+#           - db
 volumes:
     db-data:
 
