@@ -23,6 +23,10 @@ func (d *delivery) Create(subj, reply string, user *user.User) {
 	d.ec.Publish(reply, userCreated)
 }
 
+func (d *delivery) Drain() {
+	d.ec.Drain()
+}
+
 func Subscribe(usecase user.Usecase, ec *nats.EncodedConn, subjPrefix string, queue string) error {
 
 	delivery := newDelivery(usecase, ec)
@@ -31,4 +35,25 @@ func Subscribe(usecase user.Usecase, ec *nats.EncodedConn, subjPrefix string, qu
 	ec.QueueSubscribe(createSubj, queue, delivery.Create)
 
 	return nil
+}
+
+func NewDelivery(uc user.Usecase, natsURLs, subjPrefix, queue string) (*delivery, error) {
+	nc, err := nats.Connect(natsURLs)
+	if err != nil {
+		return nil, err
+	}
+
+	ec, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
+	if err != nil {
+		return nil, err
+	}
+	defer ec.Close()
+
+	err = Subscribe(uc, ec, subjPrefix, queue)
+	if err != nil {
+		return nil, err
+	}
+
+	delivery := newDelivery(uc, ec)
+	return delivery, nil
 }

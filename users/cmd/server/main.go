@@ -9,7 +9,6 @@ import (
 	"github.com/marceloaguero/go-auth-nats-gateway/users/pkg/delivery"
 	repo "github.com/marceloaguero/go-auth-nats-gateway/users/pkg/repository"
 	"github.com/marceloaguero/go-auth-nats-gateway/users/pkg/user"
-	"github.com/nats-io/nats.go"
 )
 
 func main() {
@@ -29,15 +28,20 @@ func main() {
 	usecase := user.NewUsecase(repository, pass)
 
 	// Connect to NATS
-	nc, err := nats.Connect(natsURLs)
-	if err != nil {
-		log.Panic(err)
-	}
+	//nc, err := nats.Connect(natsURLs)
+	//if err != nil {
+	//	log.Panic(err)
+	//}
 
-	ec, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
-	defer ec.Close()
+	//ec, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
+	//defer ec.Close()
 
-	err = delivery.Subscribe(usecase, ec, subjPrefix, queue)
+	//err = delivery.Subscribe(usecase, ec, subjPrefix, queue)
+	//if err != nil {
+	//	log.Panic(err)
+	//}
+
+	delivery, err := delivery.NewDelivery(usecase, natsURLs, subjPrefix, queue)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -49,6 +53,7 @@ func main() {
 	<-c
 	log.Println()
 	log.Printf("Draining...")
-	nc.Drain()
+	//nc.Drain()
+	delivery.Drain()
 	log.Fatalf("Exiting")
 }
