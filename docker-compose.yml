@@ -1,23 +1,23 @@
 version: "3"
 
 services:
-    db:
-        image: mysql:8
-        environment:
-            - MYSQL_ROOT_PASSWORD=supersecret
-            - MYSQL_DATABASE=go-auth-nats-gateway
-            - MYSQL_USER=user
-            - MYSQL_PASSWORD=supersecret
-        volumes:
-            - db-data:/var/lib/mysql
-        ports:
-            - "3306:3306"
-    nats:
-      image: nats:2.8
-      ports:
-        - "4222:4222"
-        - "8222:8222"
-      command: ["-js"]
+  db:
+    image: mysql:8
+    environment:
+      - MYSQL_ROOT_PASSWORD=supersecret
+      - MYSQL_DATABASE=go-auth-nats-gateway
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=supersecret
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  nats:
+    image: nats:2.8
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: ["-js"]
 #    users:
 #        build:
 #           context: ./users
@@ -31,5 +31,5 @@ services:
 #       depends_on:
 #           - db
 volumes:
-    db-data:
+  db-data:
 

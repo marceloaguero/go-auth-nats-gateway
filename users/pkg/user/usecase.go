@@ -104,7 +104,7 @@ func (u *usecase) GetAll() ([]*User, error) {
 	return users, nil
 }
 
-// Update modify an existing user
+// Update modifies an existing user
 func (u *usecase) Update(user *User) (*User, error) {
 	// Trim spaces
 	user.Surname = strings.TrimSpace(user.Surname)

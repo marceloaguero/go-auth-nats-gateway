@@ -28,7 +28,7 @@ func main() {
 	pass := password.NewService()
 	usecase := user.NewUsecase(repository, pass)
 
-	// Connectto NATS
+	// Connect to NATS
 	nc, err := nats.Connect(natsURLs)
 	if err != nil {
 		log.Panic(err)
