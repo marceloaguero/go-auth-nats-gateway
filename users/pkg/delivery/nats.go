@@ -17,31 +17,12 @@ func newDelivery(uc user.Usecase, ec *nats.EncodedConn) *delivery {
 	}
 }
 
-func (d *delivery) Create(subj, reply string, user *user.User) {
-	userCreated, _ := d.usecase.Create(user)
-
-	d.ec.Publish(reply, userCreated)
-}
-
-func (d *delivery) Drain() {
-	d.ec.Drain()
-}
-
-func Subscribe(usecase user.Usecase, ec *nats.EncodedConn, subjPrefix string, queue string) error {
-
-	delivery := newDelivery(usecase, ec)
-
-	createSubj := subjPrefix + ".create"
-	ec.QueueSubscribe(createSubj, queue, delivery.Create)
-
-	return nil
-}
-
 func NewDelivery(uc user.Usecase, natsURLs, subjPrefix, queue string) (*delivery, error) {
 	nc, err := nats.Connect(natsURLs)
 	if err != nil {
 		return nil, err
 	}
+	defer nc.Close()
 
 	ec, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
 	if err != nil {
@@ -49,11 +30,30 @@ func NewDelivery(uc user.Usecase, natsURLs, subjPrefix, queue string) (*delivery
 	}
 	defer ec.Close()
 
-	err = Subscribe(uc, ec, subjPrefix, queue)
+	delivery := newDelivery(uc, ec)
+
+	err = Subscribe(delivery, ec, subjPrefix, queue)
 	if err != nil {
 		return nil, err
 	}
 
-	delivery := newDelivery(uc, ec)
 	return delivery, nil
+}
+
+func (d *delivery) Drain() {
+	d.ec.Drain()
+}
+
+func Subscribe(delivery *delivery, ec *nats.EncodedConn, subjPrefix string, queue string) error {
+
+	createSubj := subjPrefix + ".create"
+	ec.QueueSubscribe(createSubj, queue, delivery.Create)
+
+	return nil
+}
+
+func (d *delivery) Create(subj, reply string, user *user.User) {
+	userCreated, _ := d.usecase.Create(user)
+
+	d.ec.Publish(reply, userCreated)
 }
