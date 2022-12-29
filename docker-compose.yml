@@ -1,6 +1,7 @@
 version: "3"
 
 services:
+
   db:
     image: mysql:8
     environment:
@@ -12,12 +13,19 @@ services:
       - db-data:/var/lib/mysql
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["/bin/bash", 'mysqladmin ping -u user -psupersecret']
+      interval: 10s
+      timeout: 2s
+      retries: 10
+
   nats:
     image: nats:2.8
     ports:
       - "4222:4222"
       - "8222:8222"
     command: ["-js"]
+
   users:
     build:
       context: ./users
@@ -33,6 +41,7 @@ services:
       - "8080:8080"
     depends_on:
       - db
+
 volumes:
   db-data:
 
