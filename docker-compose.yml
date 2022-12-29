@@ -21,7 +21,7 @@ services:
   users:
     build:
       context: ./users
-    image: marceloaguero/go-auth-grpc-gateway-users:local
+    image: marceloaguero/go-auth-nats-gateway-users:local
     environment:
       - PORT=8080
       - DB_DSN=user:supersecret@tcp(db:3306)
