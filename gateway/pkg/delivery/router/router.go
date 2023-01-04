@@ -25,6 +25,23 @@ func NewRouter(pathPrefix, natsURLs string) (*router, error) {
 	defer nc.Close()
 
 	r := gin.Default()
+
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+
+	usrs := r.Group("/users")
+	{
+		usrs.GET("/", func(c *gin.Context) {
+			c.JSON(200, gin.H{
+				"message": "usuarios",
+			})
+			//usrs.POST("/", users.Create)
+		})
+	}
+
 	err = r.Run()
 	if err != nil {
 		return nil, err
