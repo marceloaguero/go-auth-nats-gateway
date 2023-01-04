@@ -33,3 +33,7 @@ func NewRouter(pathPrefix, natsURLs string) (*router, error) {
 	router := newRouter(r, nc)
 	return router, nil
 }
+
+func (r *router) Drain() {
+	r.nc.Drain()
+}
