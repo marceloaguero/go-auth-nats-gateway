@@ -6,7 +6,7 @@ require (
 	github.com/BetuelSA/go-helpers/errors v0.0.0-20201006224357-a7baa06c8d7f
 	github.com/BetuelSA/go-helpers/password v0.0.0-20201006224357-a7baa06c8d7f
 	github.com/go-playground/validator/v10 v10.11.0
-	github.com/nats-io/nats.go v1.16.0
+	github.com/nats-io/nats.go v1.22.1
 	gorm.io/driver/mysql v1.3.5
 	gorm.io/gorm v1.23.8
 )

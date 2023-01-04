@@ -27,20 +27,6 @@ func main() {
 	pass := password.NewService()
 	usecase := user.NewUsecase(repository, pass)
 
-	// Connect to NATS
-	//nc, err := nats.Connect(natsURLs)
-	//if err != nil {
-	//	log.Panic(err)
-	//}
-
-	//ec, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
-	//defer ec.Close()
-
-	//err = delivery.Subscribe(usecase, ec, subjPrefix, queue)
-	//if err != nil {
-	//	log.Panic(err)
-	//}
-
 	delivery, err := delivery.NewDelivery(usecase, natsURLs, subjPrefix, queue)
 	if err != nil {
 		log.Panic(err)

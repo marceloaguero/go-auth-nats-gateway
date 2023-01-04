@@ -2,6 +2,8 @@ package users
 
 import (
 	"time"
+
+	"github.com/nats-io/nats.go"
 )
 
 const (
@@ -13,12 +15,14 @@ type Delivery interface {
 }
 
 type delivery struct {
+	nc         *nats.Conn
 	subjPrefix string
 	queue      string
 }
 
-func NewDelivery(subjPrefix, queue string) Delivery {
+func NewDelivery(nc *nats.Conn, subjPrefix, queue string) Delivery {
 	return &delivery{
+		nc:         nc,
 		subjPrefix: subjPrefix,
 		queue:      queue,
 	}
