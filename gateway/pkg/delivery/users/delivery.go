@@ -1,6 +1,8 @@
 package users
 
 import (
+	"io/ioutil"
+	"log"
 	"net/http"
 	"time"
 
@@ -9,7 +11,7 @@ import (
 )
 
 const (
-	timeout = time.Second * 2
+	timeout = time.Millisecond * 500
 )
 
 type Delivery interface {
@@ -31,7 +33,16 @@ func NewDelivery(nc *nats.Conn, subjPrefix, queue string) Delivery {
 }
 
 func (d *delivery) Create(c *gin.Context) {
+	createSubj := d.subjPrefix + ".create"
+	data, _ := ioutil.ReadAll(c.Request.Body)
+	msg, err := d.nc.Request(createSubj, data, timeout)
+	if err != nil {
+		log.Printf("msg: %v, err: %v", msg, err)
+	}
+	log.Printf("Respuesta %v", msg)
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Create User",
+		"request":     data,
+		"create_subj": createSubj,
+		//"msg":         msg.Data,
 	})
 }
