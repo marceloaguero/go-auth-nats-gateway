@@ -3,6 +3,8 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
+
+	"github.com/marceloaguero/go-auth-nats-gateway/gateway/pkg/delivery/users"
 )
 
 type router struct {
@@ -38,7 +40,7 @@ func NewRouter(pathPrefix, natsURLs string) (*router, error) {
 			c.JSON(200, gin.H{
 				"message": "usuarios",
 			})
-			//usrs.POST("/", users.Create)
+			usrs.POST("/", users.Create)
 		})
 	}
 

@@ -1,8 +1,10 @@
 package users
 
 import (
+	"net/http"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
 )
 
@@ -11,7 +13,7 @@ const (
 )
 
 type Delivery interface {
-	Create(createReq string) (string, error)
+	Create(c *gin.Context)
 }
 
 type delivery struct {
@@ -28,6 +30,8 @@ func NewDelivery(nc *nats.Conn, subjPrefix, queue string) Delivery {
 	}
 }
 
-func (d *delivery) Create(createReq string) (string, error) {
-	return "", nil
+func (d *delivery) Create(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Create User",
+	})
 }
