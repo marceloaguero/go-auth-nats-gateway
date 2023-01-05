@@ -51,6 +51,8 @@ services:
       - PORT=8080
       - PATH_PREFIX=/gateway
       - NATS_URLS=nats://nats:4222
+      - USERS_SUBJ_PREFIX=USERS
+      - USERS_QUEUE=users
     ports:
       - "8080:8080"
     depends_on:

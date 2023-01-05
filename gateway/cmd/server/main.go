@@ -13,6 +13,8 @@ import (
 func main() {
 	pathPrefix := os.Getenv("PATH_PREFIX")
 	natsURLs := os.Getenv("NATS_URLS")
+	usersSubjPrefix := os.Getenv("USERS_SUBJ_PREFIX")
+	usersQueue := os.Getenv("USERS_QUEUE")
 
 	// Connect to NATS server
 	nc, err := nats.Connect(natsURLs)
@@ -21,7 +23,7 @@ func main() {
 	}
 	defer nc.Close()
 
-	usersDelivery := users.NewDelivery(nc, "USERS", "users")
+	usersDelivery := users.NewDelivery(nc, usersSubjPrefix, usersQueue)
 
 	_, err = router.NewRouter(usersDelivery, pathPrefix)
 	if err != nil {
