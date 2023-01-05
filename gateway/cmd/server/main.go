@@ -6,13 +6,24 @@ import (
 	"os/signal"
 
 	"github.com/marceloaguero/go-auth-nats-gateway/gateway/pkg/delivery/router"
+	"github.com/marceloaguero/go-auth-nats-gateway/gateway/pkg/delivery/users"
+	"github.com/nats-io/nats.go"
 )
 
 func main() {
 	pathPrefix := os.Getenv("PATH_PREFIX")
 	natsURLs := os.Getenv("NATS_URLS")
 
-	router, err := router.NewRouter(pathPrefix, natsURLs)
+	// Connect to NATS server
+	nc, err := nats.Connect(natsURLs)
+	if err != nil {
+		log.Panic(err)
+	}
+	defer nc.Close()
+
+	usersDelivery := users.NewDelivery(nc, "USERS", "users")
+
+	_, err = router.NewRouter(usersDelivery, pathPrefix)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -23,6 +34,6 @@ func main() {
 	<-c
 	log.Println()
 	log.Printf("Draining...")
-	router.Drain()
+	nc.Drain()
 	log.Fatal("Exiting...")
 }
