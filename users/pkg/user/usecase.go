@@ -42,7 +42,7 @@ func (u *usecase) Create(user *User) (*User, error) {
 	// Verify email uniqueness
 	user.Email = strings.TrimSpace(user.Email)
 	_, err := u.GetByEmail(user.Email)
-	if err != nil {
+	if err == nil {
 		return nil, errors.BadRequest.Newf("user with email %s already exists", user.Email)
 	}
 

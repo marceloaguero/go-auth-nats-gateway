@@ -22,13 +22,11 @@ func NewDelivery(uc user.Usecase, natsURLs, subjPrefix, queue string) (*delivery
 	if err != nil {
 		return nil, err
 	}
-	defer nc.Close()
 
 	ec, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
 	if err != nil {
 		return nil, err
 	}
-	defer ec.Close()
 
 	delivery := newDelivery(uc, ec)
 
