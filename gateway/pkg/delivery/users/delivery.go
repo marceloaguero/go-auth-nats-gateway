@@ -39,7 +39,9 @@ func (d *delivery) Create(c *gin.Context) {
 	if err != nil {
 		log.Printf("msg: %v, err: %v", msg, err)
 	}
-	log.Printf("Respuesta %v", msg)
+	log.Printf("Respuesta Subject %s", msg.Subject)
+	log.Printf("Respuesta Reply %s", msg.Reply)
+	log.Printf("Respuesta Data %s", msg.Data)
 	c.JSON(http.StatusOK, gin.H{
 		"request":     data,
 		"create_subj": createSubj,
