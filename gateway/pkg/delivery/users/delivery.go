@@ -1,6 +1,7 @@
 package users
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -42,9 +43,5 @@ func (d *delivery) Create(c *gin.Context) {
 	log.Printf("Respuesta Subject %s", msg.Subject)
 	log.Printf("Respuesta Reply %s", msg.Reply)
 	log.Printf("Respuesta Data %s", msg.Data)
-	c.JSON(http.StatusOK, gin.H{
-		"request":     data,
-		"create_subj": createSubj,
-		//"msg":         msg.Data,
-	})
+	c.IndentedJSON(http.StatusOK, fmt.Sprintf("%s", msg.Data))
 }
