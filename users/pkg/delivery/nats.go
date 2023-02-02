@@ -1,6 +1,8 @@
 package delivery
 
 import (
+	"log"
+
 	"github.com/marceloaguero/go-auth-nats-gateway/users/pkg/user"
 	"github.com/nats-io/nats.go"
 )
@@ -53,5 +55,6 @@ func Subscribe(delivery *delivery, ec *nats.EncodedConn, subjPrefix string, queu
 func (d *delivery) Create(subj, reply string, user *user.User) {
 	userCreated, _ := d.usecase.Create(user)
 
+	log.Printf("User: %v", userCreated)
 	d.ec.Publish(reply, userCreated)
 }
