@@ -1,13 +1,14 @@
 package users
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os/user"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/marceloaguero/go-auth-nats-gateway/users/pkg/user"
 	"github.com/nats-io/nats.go"
 )
 
@@ -20,28 +21,26 @@ type Delivery interface {
 }
 
 type delivery struct {
-	nc         *nats.Conn
+	ec         *nats.EncodedConn
 	subjPrefix string
 	queue      string
 }
 
-func NewDelivery(nc *nats.Conn, subjPrefix, queue string) Delivery {
+func NewDelivery(ec *nats.EncodedConn, subjPrefix, queue string) Delivery {
 	return &delivery{
-		nc:         nc,
+		ec:         ec,
 		subjPrefix: subjPrefix,
 		queue:      queue,
 	}
 }
 
 func (d *delivery) Create(c *gin.Context) {
+	userCreated := &user.User{}
 	createSubj := d.subjPrefix + ".create"
 	data, _ := ioutil.ReadAll(c.Request.Body)
-	msg, err := d.nc.Request(createSubj, data, timeout)
+	err := d.ec.Request(createSubj, data, userCreated, timeout)
 	if err != nil {
-		log.Printf("msg: %v, err: %v", msg, err)
+		log.Printf("err: %v", err)
 	}
-	log.Printf("Respuesta Subject %s", msg.Subject)
-	log.Printf("Respuesta Reply %s", msg.Reply)
-	log.Printf("Respuesta Data %s", msg.Data)
-	c.IndentedJSON(http.StatusOK, fmt.Sprintf("%s", msg.Data))
+	c.IndentedJSON(http.StatusOK, userCreated)
 }

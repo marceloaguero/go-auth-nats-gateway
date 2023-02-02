@@ -23,7 +23,13 @@ func main() {
 	}
 	defer nc.Close()
 
-	usersDelivery := users.NewDelivery(nc, usersSubjPrefix, usersQueue)
+	ec, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
+	if err != nil {
+		log.Panic(err)
+	}
+	defer ec.Close()
+
+	usersDelivery := users.NewDelivery(ec, usersSubjPrefix, usersQueue)
 
 	_, err = router.NewRouter(usersDelivery, pathPrefix)
 	if err != nil {
