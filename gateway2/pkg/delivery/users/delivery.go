@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os/user"
 	"time"
 
 	"github.com/gin-gonic/gin"
