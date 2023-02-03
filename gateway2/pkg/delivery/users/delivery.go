@@ -1,7 +1,6 @@
 package users
 
 import (
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -34,10 +33,17 @@ func NewDelivery(ec *nats.EncodedConn, subjPrefix, queue string) Delivery {
 }
 
 func (d *delivery) Create(c *gin.Context) {
+	var newUser *user.User
 	userCreated := &user.User{}
 	createSubj := d.subjPrefix + ".create"
-	data, _ := ioutil.ReadAll(c.Request.Body)
-	err := d.ec.Request(createSubj, data, userCreated, timeout)
+	//data, err := ioutil.ReadAll(c.Request.Body)
+	err := c.BindJSON(&newUser)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
+	err = d.ec.Request(createSubj, newUser, userCreated, timeout)
 	if err != nil {
 		log.Printf("err: %v", err)
 	}
