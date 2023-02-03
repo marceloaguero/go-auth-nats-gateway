@@ -2,13 +2,13 @@ package user
 
 // User describes a user in the system
 type User struct {
-	ID       uint   `gorm:"primaryKey"`
-	Surname  string `gorm:"size:60" validate:"required,gte=2,lte=60"`
-	Name     string `gorm:"size:60" validate:"lte=60"`
-	Email    string `gorm:"size=60,unique" validate:"email,required"`
-	Password string `gorm:"-"`
-	Hash     string `gorm:"size=60"`
-	IsActive bool
+	ID       uint   `json:"id" gorm:"primaryKey"`
+	Surname  string `json:"surname" gorm:"size:60" validate:"required,gte=2,lte=60"`
+	Name     string `json:"name" gorm:"size:60" validate:"lte=60"`
+	Email    string `json:"email" gorm:"size=60,unique" validate:"email,required"`
+	Password string `json:"password" gorm:"-"`
+	Hash     string `json:"hash" gorm:"size=60"`
+	IsActive bool   `json:"is_active"`
 }
 
 // Repository represents the user permanent repo
